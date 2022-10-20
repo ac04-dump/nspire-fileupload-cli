@@ -1,3 +1,4 @@
+#include "upload.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -26,16 +27,16 @@ int std_libnspire_err(int ret) {
 		exit(errnum); \
 	} while (0)
 
-int main(int argc, char **argv) {
-    printf("starting...\n");
+int upload(char *fsrc, const char *fdest) {
+    //printf("starting...\n");
     int ret;
     nspire_handle_t *handle;
 
     if ((ret = nspire_init(&handle))) {
-		ERR_EXIT(nspire_strerror(ret), std_libnspire_err(ret));
+      ERR_EXIT(nspire_strerror(ret), std_libnspire_err(ret));
     }
 
-    FILE *f = fopen("../prime-checker/prime-checker.tns", "rb");
+    FILE *f = fopen(fsrc, "rb");
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
@@ -46,13 +47,12 @@ int main(int argc, char **argv) {
 
     string[fsize] = 0;
 
-    const char *path = "primes.tns";
+    //const char *path = "primes.tns";
 
-    printf("Uploading primes.tns\n");
-    ret = nspire_file_write(handle, path, string, fsize);
+    ret = nspire_file_write(handle, fdest, string, fsize);
 
     nspire_free(handle);
 
-    printf("done\n");
+    //printf("done\n");
     return ret;
 }
